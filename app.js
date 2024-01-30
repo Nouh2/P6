@@ -12,12 +12,16 @@ app.use(users);
 
 mongoose
   .connect(
-    "mongodb+srv://Nouh:Gamerfou1@cluster0.qyzrsn5.mongodb.net/?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    "mongodb+srv://" + process.env.MONGO + "/?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 //app.use(bodyParser.json());
+app.post("/api/auth", usersRoutes);
 
 module.exports = app;

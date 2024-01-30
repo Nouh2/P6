@@ -3,46 +3,41 @@ const users = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-exports.signup = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then((hash) => {
+exports.signup = async (req, res, next) => {
+  try {
+    const hash = await bcrypt.hash(req.body.password, 10);
     const user = new users({
       email: req.body.email,
       password: hash,
     });
-    user
-      .save()
-      .then((res) => console.log("user enregistré", res))
-      .catch((error) => console.log(error));
-
-    res.send({ message: "Utilisateur enregistré" });
-  });
+    await user.save();
+    return res.status(201).json({ message: "User saved" });
+  } catch (e) {
+    return res.status(500).json({ error: "server error" });
+  }
 };
 
-exports.login = (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  users
-    .findOne({ email: email })
-    .then((user) => {
+exports.login = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    await users.findOne({ email: email }).then((user) => {
       if (!user) {
-        return res.status(401).json({ error: "Email incorrect" });
-      } else {
-        bcrypt.compare(password, user.password).then((correct) => {
-          if (!correct) {
-            return res.status(401).json({ error: "Mot de passe incorrect" });
-          } else {
-            res.status(200).json({
-              userToken: user._id,
-              token: jwt.sign({ userToken: user._id }, process.env.AUTH_TOKEN, {
-                expiresIn: "1H",
-              }),
-            });
-          }
-        });
+        return res.status(401).json({ error: "Login incorrect" });
       }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(401).json({ error });
+      bcrypt.compare(password, user.password).then((correct) => {
+        if (!correct) {
+          return res.status(401).json({ error: "Login incorrect" });
+        }
+        res.status(200).json({
+          userToken: user._id,
+          token: jwt.sign({ userToken: user._id }, process.env.AUTH_TOKEN, {
+            expiresIn: "12H",
+          }),
+        });
+      });
     });
+  } catch (e) {
+    return res.status(500).json({ error: "Server error" });
+  }
 };
