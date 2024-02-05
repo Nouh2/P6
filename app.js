@@ -2,14 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const cors = require("cors");
-const users = require("./models/users");
 const usersRoutes = require("./routes/users");
+const saucesRoutes = require("./routes/sauces");
 require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
-app.use(usersRoutes);
-app.use(users);
 
 mongoose
   .connect(
@@ -18,6 +16,7 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 //app.use(bodyParser.json());
-app.post("/api/auth", usersRoutes);
+app.use("/api/auth", usersRoutes);
+app.use("/api/auth", saucesRoutes);
 
 module.exports = app;

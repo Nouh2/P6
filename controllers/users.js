@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
 const users = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-const signup = (exports.signup = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 10);
     const user = new users({
@@ -15,8 +15,7 @@ const signup = (exports.signup = async (req, res, next) => {
   } catch (e) {
     return res.status(500).json({ error: "server error" });
   }
-});
-console.log(signup);
+};
 
 exports.login = async (req, res, next) => {
   try {
