@@ -11,11 +11,8 @@ module.exports = (req, res, next) => {
       }
     });
     const userId = decodedToken.userId;
-    if (req.body.userId && req.body.userId !== userId) {
-      return res.status(401).json({ error: "Error userId" });
-    } else {
-      next();
-    }
+
+    return next();
   } catch (error) {
     res.status(401).json({ error: "Error authentification" });
   }

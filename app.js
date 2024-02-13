@@ -4,6 +4,7 @@ const app = express();
 const cors = require("cors");
 const usersRoutes = require("./routes/users");
 const saucesRoutes = require("./routes/sauces");
+const path = require("path");
 require("dotenv").config();
 
 app.use(cors());
@@ -17,6 +18,6 @@ mongoose
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 //app.use(bodyParser.json());
 app.use("/api/auth", usersRoutes);
-app.use("/api/auth", saucesRoutes);
-
+app.use("/api/sauces", saucesRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
 module.exports = app;
