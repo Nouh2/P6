@@ -33,8 +33,8 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ error: "Login incorrect" });
     }
     return res.status(200).json({
-      userToken: user._id,
-      token: jwt.sign({ userToken: user._id }, process.env.AUTH_TOKEN, {
+      userId: user._id,
+      token: jwt.sign({ userId: user._id }, process.env.AUTH_TOKEN, {
         expiresIn: "12H",
       }),
     });

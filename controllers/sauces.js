@@ -1,9 +1,9 @@
-const sauces = require("../models/sauces");
-const express = require("express");
+const Sauces = require("../models/Sauces");
 const fs = require("fs");
 
 exports.createSauces = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauces);
+  delete sauceObject._id;
   const sauces = new sauces({
     ...sauceObject,
     userId: req.auth.userId,
@@ -11,6 +11,9 @@ exports.createSauces = (req, res, next) => {
       req.file.filename
     }`,
   });
+  // console.log(sauceObject);
+  // console.log(userId);
+  // console.log(sauces);
   sauces
     .save()
     .then(() => res.status(201).json({ message: "sauce enregistré" }))
@@ -18,21 +21,19 @@ exports.createSauces = (req, res, next) => {
 };
 
 exports.seeSauces = (req, res, next) => {
-  sauces
-    .find()
+  Sauces.find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
 };
 
 exports.seeOneSauce = (req, res, next) => {
-  sauces
-    .findOne({ _id: req.params.id })
+  Sauces.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
 
 exports.deleteSauce = (req, res, next) => {
-  sauces.findOne({ _id: req.params.id }).then(
+  Sauces.findOne({ _id: req.params.id }).then(
     ((sauce) => {
       if (sauce.userId != req.auth.userId) {
         res.status(401).json({ message: "Not authorized" });
