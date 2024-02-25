@@ -77,4 +77,9 @@ exports.modifySauce = (req, res, next) => {
     });
 };
 
-exports.likeSauce = (req, res, next) => {};
+exports.likeSauce = (req, res, next) => {
+  const like = req.body.like;
+  if (like === 1) {
+    Sauces.updateOne({ _id: req.body.id }, { like: like++ }), { like: push };
+  }
+};
