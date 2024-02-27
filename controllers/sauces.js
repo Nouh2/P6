@@ -10,6 +10,10 @@ exports.createSauces = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
+    likes: 0,
+    dislikes: 0,
+    usersLiked: [],
+    usersDisliked: [],
   });
 
   sauces
@@ -79,7 +83,25 @@ exports.modifySauce = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
   const like = req.body.like;
+  const sauce = Sauces.findOne({ _id: req.params.id });
+  // const user = user.findOne({ _id: userId });
   if (like === 1) {
-    Sauces.updateOne({ _id: req.body.id }, { like: like++ }), { like: push };
-  }
+   Sauces.updateOne({
+    likes++,
+    usersLiked.push(userId),
+   })
+  };
+  if(like === -1){
+    Sauces.updateOne({
+      dislikes++,
+      usersDisliked.push(userId),
+    })
+  };
+  if(like === 0) {
+    Sauces.updateOne({
+      likes--,
+      usersLiked.push(userId)
+    })
+  };
+  
 };
