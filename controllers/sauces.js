@@ -65,6 +65,7 @@ exports.modifySauce = (req, res, next) => {
       if (sauce.userId !== req.auth.userId) {
         res.status(401).json({ message: "Not authorized" });
       } else {
+        console.log(req.body.userId);
         const filename = sauce.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, () => {
           Sauces.updateOne(
@@ -83,10 +84,16 @@ exports.modifySauce = (req, res, next) => {
 
 exports.likeSauce = (req, res, next) => {
   Sauces.findOne({ _id: req.params.id }).then((sauce) => {
+    const like = req.body.like;
     if (like === 1) {
+      console.log(12);
       let { likes, usersLiked } = sauce;
+      if (usersLiked.includes(req.body.userId))
+        return res
+          .status(400)
+          .json({ message: "Vous avez déjà liké cette sauce" });
       likes++;
-      usersLiked.push(userId);
+      usersLiked.push(req.body.userId);
 
       Sauces.updateOne(
         { _id: req.params.id },
