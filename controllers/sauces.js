@@ -93,10 +93,9 @@ exports.likeSauce = (req, res, next) => {
         return res
           .status(400)
           .json({ message: "Vous avez déjà liké cette sauce" });
-      likes++;
       Sauces.updateOne(
         { _id: sauceId },
-        { $inc: { likes: likes }, $push: { usersLiked: userId } }
+        { $inc: { likes: +1 }, $push: { usersLiked: userId } }
       )
         .then(() => res.status(200).json({ message: "Like ajouté" }))
         .catch((error) => res.status(400).json({ error }));
@@ -107,11 +106,10 @@ exports.likeSauce = (req, res, next) => {
       const userId = req.body.userId;
       const sauceId = req.params.id;
       if (usersLiked.includes(userId)) {
-        likes--;
         Sauces.updateOne(
           { _id: sauceId },
           {
-            $inc: { likes: likes },
+            $inc: { likes: -1 },
             $pull: { usersLiked: userId },
           }
         )
@@ -119,11 +117,10 @@ exports.likeSauce = (req, res, next) => {
           .catch((error) => res.status(400).json({ error }));
       }
       if (usersDisliked.includes(userId)) {
-        dislikes--;
         Sauces.updateOne(
           { _id: sauceId },
           {
-            $inc: { dislikes: dislikes },
+            $inc: { dislikes: -1 },
             $pull: { usersDisliked: userId },
           }
         )
@@ -140,12 +137,11 @@ exports.likeSauce = (req, res, next) => {
         return res
           .status(400)
           .json({ message: "Vous avez déjà disliké cette sauce" });
-      dislikes++;
 
       Sauces.updateOne(
         { _id: sauceId },
         {
-          $inc: { dislikes: dislikes },
+          $inc: { dislikes: +1 },
           $push: { usersDisliked: userId },
         }
       )
